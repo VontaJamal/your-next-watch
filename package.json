@@ -20,7 +20,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "format": "prettier --write ./src"
+    "format": "prettier --write ./src",
+    "postintall": "npm rebuild sharp"
   },
   "dependencies": {
     "@tanstack/react-query": "4.29.25",
