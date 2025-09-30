@@ -3,7 +3,7 @@ import {useQuery} from '@tanstack/react-query'
 import {authenticatedFetch} from '../../utils/client'
 
 export function MovieFinder() {
-  const {data, isLoading, error} = useQuery<{movies: any[]}, Error>({
+  const {data: moviesData, isLoading, error} = useQuery<{movies: any[]}, Error>({
     queryKey: ['movies'],
     queryFn: async () => {
       try {
@@ -18,5 +18,8 @@ export function MovieFinder() {
     },
   })
 
-  return <MovieFinderView data={data} isLoading={isLoading} error={error} />
+  console.log('first', moviesData)
+  return (
+    <MovieFinderView data={moviesData} isLoading={isLoading} error={error} />
+  )
 }
