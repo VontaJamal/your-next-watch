@@ -3,6 +3,7 @@ import {useQuery} from '@tanstack/react-query'
 import {authenticatedFetch} from '../../utils/client'
 import {useRouter} from 'next/router'
 import {useEffect, useState} from 'react'
+import {useMoviePagination} from '../../hooks/useMoviePagination'
 
 export function MovieFinder() {
   const router = useRouter()
@@ -35,16 +36,31 @@ export function MovieFinder() {
     enabled: router.isReady,
   })
 
-  const handlePageChange = (page: number) => {
-    router.push(
-      {
-        pathname: router.pathname,
-        query: {...router.query, page},
-      },
-      undefined,
-      {shallow: true},
-    )
-  }
+  // Second query to get exact count from last page
+  const {data: lastPageData} = useQuery<{data: any[]}, Error>({
+    queryKey: ['movies', 'lastPage', moviesData?.totalPages],
+    queryFn: async () => {
+      if (!moviesData?.totalPages) return null
+      try {
+        const response = await authenticatedFetch(
+          `/movies?page=${moviesData.totalPages}`,
+        )
+        if (!response.ok) {
+          throw new Error('Failed to fetch last page')
+        }
+        return response.json()
+      } catch (error) {
+        throw new Error(`Failed to fetch last page: ${error}`)
+      }
+    },
+    enabled: router.isReady && !!moviesData?.totalPages,
+  })
+
+  const {getResultsInfo, handlePageChange} = useMoviePagination({
+    moviesData,
+    lastPageData,
+    currentPage,
+  })
 
   return (
     <MovieFinderView
@@ -53,6 +69,7 @@ export function MovieFinder() {
       error={error}
       currentPage={currentPage}
       onPageChange={handlePageChange}
+      resultsInfo={getResultsInfo()}
     />
   )
 }
