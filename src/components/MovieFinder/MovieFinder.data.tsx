@@ -1,19 +1,29 @@
 import {MovieFinderView} from './MovieFinder.view'
 import {useQuery} from '@tanstack/react-query'
 import {authenticatedFetch} from '../../utils/client'
+import {useRouter} from 'next/router'
+import {useEffect, useState} from 'react'
 
 export function MovieFinder() {
+  const router = useRouter()
+  const [currentPage, setCurrentPage] = useState(1)
+
+  useEffect(() => {
+    if (router.isReady) {
+      const page = parseInt(router.query.page as string) || 1
+      setCurrentPage(page)
+    }
+  }, [router.isReady, router.query.page])
+
   const {
     data: moviesData,
     isLoading,
     error,
-  } = useQuery<{movies: any[]}, Error>({
-    queryKey: ['movies'],
+  } = useQuery<{data: any[]; totalPages: number}, Error>({
+    queryKey: ['movies', currentPage],
     queryFn: async () => {
       try {
-        const response = await authenticatedFetch(
-          '/movies',
-        )
+        const response = await authenticatedFetch(`/movies?page=${currentPage}`)
         if (!response.ok) {
           throw new Error('Failed to fetch movies')
         }
@@ -22,9 +32,27 @@ export function MovieFinder() {
         throw new Error(`Failed to fetch movies: ${error}`)
       }
     },
+    enabled: router.isReady,
   })
 
+  const handlePageChange = (page: number) => {
+    router.push(
+      {
+        pathname: router.pathname,
+        query: {...router.query, page},
+      },
+      undefined,
+      {shallow: true},
+    )
+  }
+
   return (
-    <MovieFinderView data={moviesData} isLoading={isLoading} error={error} />
+    <MovieFinderView
+      data={moviesData}
+      isLoading={isLoading}
+      error={error}
+      currentPage={currentPage}
+      onPageChange={handlePageChange}
+    />
   )
 }
