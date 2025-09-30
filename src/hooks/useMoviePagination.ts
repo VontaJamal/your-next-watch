@@ -1,17 +1,18 @@
 import {useRouter} from 'next/router'
+import {MOVIES_PER_PAGE} from '../constants/pagination'
 
 type UseMoviePaginationProps = {
   moviesData: {data: any[]; totalPages: number} | undefined
   lastPageData: {data: any[]} | undefined
   currentPage: number
+  limit: number
 }
-
-const DEFAULT_LIMIT = 25
 
 export function useMoviePagination({
   moviesData,
   lastPageData,
   currentPage,
+  limit,
 }: UseMoviePaginationProps) {
   const router = useRouter()
 
@@ -19,7 +20,6 @@ export function useMoviePagination({
     if (!moviesData) return {start: 0, end: 0, total: 0}
 
     const {totalPages, data} = moviesData
-    const limit = DEFAULT_LIMIT
     const currentPageStart = (currentPage - 1) * limit + 1
     const currentPageEnd = currentPageStart + data.length - 1
 
@@ -41,7 +41,7 @@ export function useMoviePagination({
     router.push(
       {
         pathname: router.pathname,
-        query: {...router.query, page},
+        query: {...router.query, page, limit},
       },
       undefined,
       {shallow: true},

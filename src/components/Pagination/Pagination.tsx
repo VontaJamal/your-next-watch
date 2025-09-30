@@ -15,7 +15,18 @@ export function Pagination({
 
   const getPageNumbers = () => {
     const pages = []
-    for (let i = 1; i <= totalPages; i++) {
+    const maxVisiblePages = 5 // Show 5 pages at a time
+    const halfVisible = Math.floor(maxVisiblePages / 2)
+
+    let startPage = Math.max(1, currentPage - halfVisible)
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1)
+
+    // Adjust start page if we're near the end
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1)
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
       pages.push(i)
     }
     return pages

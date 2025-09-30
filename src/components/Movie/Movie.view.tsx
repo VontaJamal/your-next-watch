@@ -29,13 +29,6 @@ export function Movie({title, posterUrl, rating}: MovieProps) {
         <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
           {title}
         </h3>
-        {rating ? (
-          <div className="flex items-center justify-between">
-            <span className="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
-              {rating}
-            </span>
-          </div>
-        ) : null}
       </div>
     </div>
   )
