@@ -8,7 +8,7 @@ type Movie = {
 }
 
 type MovieListViewProps = {
-  data: {data: Movie[]; totalPages: number}
+  data: {data: Movie[]; totalPages: number} | undefined
 }
 
 export function MovieListView({data}: MovieListViewProps) {
