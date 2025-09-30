@@ -33,12 +33,17 @@ export function Pagination({
   }
 
   return (
-    <div className="mt-6">
-      <div className="flex justify-center items-center gap-2">
+    <nav className="mt-6" aria-label="Pagination Navigation">
+      <div
+        className="flex justify-center items-center gap-2"
+        role="group"
+        aria-label="Pagination controls"
+      >
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+          aria-label={`Go to previous page (page ${currentPage - 1})`}
+          className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
           Previous
         </button>
@@ -47,7 +52,9 @@ export function Pagination({
           <button
             key={page}
             onClick={() => onPageChange(page)}
-            className={`px-3 py-1 border rounded ${
+            aria-label={`Go to page ${page}`}
+            aria-current={page === currentPage ? 'page' : undefined}
+            className={`px-3 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
               page === currentPage
                 ? 'bg-blue-500 text-white border-blue-500'
                 : 'hover:bg-gray-100'
@@ -60,18 +67,22 @@ export function Pagination({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+          aria-label={`Go to next page (page ${currentPage + 1})`}
+          className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
           Next
         </button>
       </div>
 
       {resultsInfo && resultsInfo.total > 0 && (
-        <div className="mt-4 text-center text-gray-600">
+        <div
+          className="mt-4 text-center text-gray-600"
+          aria-label="Results information"
+        >
           Showing results {resultsInfo.start}-{resultsInfo.end} of{' '}
           {resultsInfo.total}
         </div>
       )}
-    </div>
+    </nav>
   )
 }

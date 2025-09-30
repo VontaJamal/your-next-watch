@@ -34,24 +34,20 @@ function formatDuration(duration: string): string {
   }
 }
 
-export function MovieView({movieDetails, isLoading, error}: MovieProps) {
-  if (isLoading) {
-    return (
-      <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-        <div className="p-4">
-          <div className="text-sm text-gray-500">Loading details...</div>
-        </div>
-      </div>
-    )
-  }
+export function MovieView({movieDetails, error}: MovieProps) {
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+      <section
+        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+        aria-label="Movie details error"
+      >
         <div className="p-4">
-          <div className="text-sm text-red-500">Failed to load details</div>
+          <div className="text-sm text-red-500" role="alert" aria-live="polite">
+            Failed to load details
+          </div>
         </div>
-      </div>
+      </section>
     )
   }
 
@@ -62,23 +58,33 @@ export function MovieView({movieDetails, isLoading, error}: MovieProps) {
   const {posterUrl, title, ratingValue, duration, mainActors} = movieDetails
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow group">
+    <section
+      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow group"
+      aria-label={`Movie: ${title}`}
+    >
       <div className="relative h-80">
         {posterUrl ? (
           <Image
             src={posterUrl}
-            alt={title}
+            alt={`${title} movie poster`}
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
-          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+          <div
+            className="w-full h-full bg-gray-200 flex items-center justify-center"
+            role="img"
+            aria-label={`${title} - no poster available`}
+          >
             <span className="text-gray-500 text-sm">No Image</span>
           </div>
         )}
         {movieDetails?.summary ? (
-          <div className="absolute inset-0 bg-black bg-opacity-90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black bg-opacity-95 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center p-4"
+            aria-hidden="true"
+          >
             <p className="text-white text-sm text-center leading-relaxed">
               {movieDetails.summary}
             </p>
@@ -93,11 +99,19 @@ export function MovieView({movieDetails, isLoading, error}: MovieProps) {
         <div className="space-y-2 text-sm text-gray-600">
           <div className="flex items-center justify-between">
             {ratingValue ? (
-              <span className="text-xs text-gray-600">⭐️ {ratingValue}</span>
+              <span
+                className="text-xs text-gray-600"
+                aria-label={`Rating: ${ratingValue} stars`}
+              >
+                ⭐️ {ratingValue}
+              </span>
             ) : null}
 
             {duration ? (
-              <span className="text-xs text-gray-600">
+              <span
+                className="text-xs text-gray-600"
+                aria-label={`Duration: ${formatDuration(duration)}`}
+              >
                 {formatDuration(duration)}
               </span>
             ) : null}
@@ -108,7 +122,15 @@ export function MovieView({movieDetails, isLoading, error}: MovieProps) {
               <p className="text-xs text-gray-500 mb-1">
                 <span className="font-medium">Genres:</span>
               </p>
-              <p className="text-xs text-gray-600">
+              <p
+                className="text-xs text-gray-600"
+                aria-label={`Genres: ${movieDetails.genres
+                  .slice(0, 3)
+                  .map((genre) => genre.title)
+                  .join(', ')}${
+                  movieDetails.genres.length > 3 ? ' and more' : ''
+                }`}
+              >
                 {movieDetails.genres
                   .slice(0, 3)
                   .map((genre) => genre.title)
@@ -123,7 +145,12 @@ export function MovieView({movieDetails, isLoading, error}: MovieProps) {
               <p className="text-xs text-gray-500 mb-1">
                 <span className="font-medium">Cast:</span>
               </p>
-              <p className="text-xs text-gray-600">
+              <p
+                className="text-xs text-gray-600"
+                aria-label={`Cast: ${mainActors.slice(0, 3).join(', ')}${
+                  mainActors.length > 3 ? ' and more' : ''
+                }`}
+              >
                 {mainActors.slice(0, 3).join(', ')}
                 {mainActors.length > 3 ? '...' : ''}
               </p>
@@ -131,6 +158,6 @@ export function MovieView({movieDetails, isLoading, error}: MovieProps) {
           ) : null}
         </div>
       </div>
-    </div>
+    </section>
   )
 }

@@ -4,6 +4,10 @@ import {useRouter} from 'next/router'
 import {useEffect, useState} from 'react'
 import {GenreFilterView} from './GenreFilter.view'
 
+type GenreFilterProps = {
+  dispatch: (action: {type: 'SET_GENRE'; payload: string}) => void
+}
+
 const GENRES_CACHE_KEY = 'movie-genres'
 
 type Genre = {
@@ -17,7 +21,7 @@ type GenresResponse = {
   totalPages: number
 }
 
-export function GenreFilter() {
+export function GenreFilter({dispatch}: GenreFilterProps) {
   const router = useRouter()
   const [selectedGenre, setSelectedGenre] = useState('')
 
@@ -67,6 +71,7 @@ export function GenreFilter() {
 
   const handleGenreChange = (genre: string) => {
     setSelectedGenre(genre)
+    dispatch({type: 'SET_GENRE', payload: genre})
     router.push(
       {
         pathname: router.pathname,
@@ -79,6 +84,7 @@ export function GenreFilter() {
 
   const handleClearGenre = () => {
     setSelectedGenre('')
+    dispatch({type: 'SET_GENRE', payload: ''})
     const {genre, ...queryWithoutGenre} = router.query
     router.push(
       {

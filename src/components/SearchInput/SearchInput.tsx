@@ -61,17 +61,24 @@ export function SearchInput({onSearchChange}: SearchInputProps) {
   }
 
   return (
-    <div className="flex gap-2 max-w-md">
+    <div className="flex gap-2 max-w-md" role="search">
+      <label htmlFor="movie-search" className="sr-only">
+        Search for movies
+      </label>
       <input
+        id="movie-search"
         type="text"
         placeholder="Search movies..."
         value={inputValue}
         onChange={(e) => handleInputChange(e.target.value)}
         onKeyDown={handleKeyDown}
+        aria-label="Search for movies"
+        aria-describedby="search-help"
         className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
       <button
         onClick={handleSubmit}
+        aria-label="Submit search"
         className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
       >
         Search
@@ -79,11 +86,15 @@ export function SearchInput({onSearchChange}: SearchInputProps) {
       {hasSearchQuery && (
         <button
           onClick={handleClearSearch}
+          aria-label="Clear search"
           className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
         >
           Clear
         </button>
       )}
+      <div id="search-help" className="sr-only">
+        Press Enter to search or use the Search button
+      </div>
     </div>
   )
 }

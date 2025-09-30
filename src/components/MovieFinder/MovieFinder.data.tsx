@@ -161,7 +161,7 @@ export function MovieFinder() {
     <div className="w-3/5 my-5 mx-auto text-center">
       <div className="flex gap-4 justify-center items-end mb-6">
         <SearchInput onSearchChange={handleSearchChange} />
-        <GenreFilter />
+        <GenreFilter dispatch={dispatch} />
       </div>
       <ErrorBoundary>
         <MovieFinderView
