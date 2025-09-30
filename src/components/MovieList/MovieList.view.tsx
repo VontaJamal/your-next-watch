@@ -21,12 +21,9 @@ export function MovieListView({data}: MovieListViewProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {data.data.map(({id}) => (
-        <Movie
-          key={id}
-          id={id}
-        />
+        <Movie key={id} id={id} />
       ))}
     </div>
   )
