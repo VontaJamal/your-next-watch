@@ -34,21 +34,7 @@ function formatDuration(duration: string): string {
   }
 }
 
-export function MovieView({movieDetails, isLoading, error}: MovieProps) {
-  if (isLoading) {
-    return (
-      <section
-        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-        aria-label="Loading movie details"
-      >
-        <div className="p-4">
-          <div className="text-sm text-gray-500" role="status">
-            Loading details...
-          </div>
-        </div>
-      </section>
-    )
-  }
+export function MovieView({movieDetails, error}: MovieProps) {
 
   if (error) {
     return (
@@ -96,7 +82,7 @@ export function MovieView({movieDetails, isLoading, error}: MovieProps) {
         )}
         {movieDetails?.summary ? (
           <div
-            className="absolute inset-0 bg-black bg-opacity-90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4"
+            className="absolute inset-0 bg-black bg-opacity-95 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center p-4"
             aria-hidden="true"
           >
             <p className="text-white text-sm text-center leading-relaxed">
