@@ -13,21 +13,38 @@ export function MovieFinder() {
   const [currentPage, setCurrentPage] = useState(1)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedGenre, setSelectedGenre] = useState('')
+  const [limit, setLimit] = useState(MOVIES_PER_PAGE)
 
   useEffect(() => {
     if (router.isReady) {
       const page = parseInt(router.query.page as string) || 1
       const search = (router.query.search as string) || ''
       const genre = (router.query.genre as string) || ''
+      const limitParam =
+        parseInt(router.query.limit as string) || MOVIES_PER_PAGE
       setCurrentPage(page)
       setSearchQuery(search)
       setSelectedGenre(genre)
+      setLimit(limitParam)
+
+      // Add limit to URL if it's not present
+      if (!router.query.limit) {
+        router.replace(
+          {
+            pathname: router.pathname,
+            query: {...router.query, limit: limitParam},
+          },
+          undefined,
+          {shallow: true},
+        )
+      }
     }
   }, [
     router.isReady,
     router.query.page,
     router.query.search,
     router.query.genre,
+    router.query.limit,
   ])
 
   const {
@@ -35,7 +52,7 @@ export function MovieFinder() {
     isLoading,
     error,
   } = useQuery<{data: any[]; totalPages: number}, Error>({
-    queryKey: ['movies', currentPage, searchQuery, selectedGenre],
+    queryKey: ['movies', currentPage, searchQuery, selectedGenre, limit],
     queryFn: async () => {
       try {
         const searchParam = searchQuery
@@ -45,7 +62,7 @@ export function MovieFinder() {
           ? `&genre=${encodeURIComponent(selectedGenre)}`
           : ''
         const response = await authenticatedFetch(
-          `/movies?page=${currentPage}&limit=${MOVIES_PER_PAGE}${searchParam}${genreParam}`,
+          `/movies?page=${currentPage}&limit=${limit}${searchParam}${genreParam}`,
         )
         if (!response.ok) {
           throw new Error('Failed to fetch movies')
@@ -66,6 +83,7 @@ export function MovieFinder() {
       moviesData?.totalPages,
       searchQuery,
       selectedGenre,
+      limit,
     ],
     queryFn: async () => {
       if (!moviesData?.totalPages) return null
@@ -77,7 +95,7 @@ export function MovieFinder() {
           ? `&genre=${encodeURIComponent(selectedGenre)}`
           : ''
         const response = await authenticatedFetch(
-          `/movies?page=${moviesData.totalPages}&limit=${MOVIES_PER_PAGE}${searchParam}${genreParam}`,
+          `/movies?page=${moviesData.totalPages}&limit=${limit}${searchParam}${genreParam}`,
         )
         if (!response.ok) {
           throw new Error('Failed to fetch last page')
@@ -94,6 +112,7 @@ export function MovieFinder() {
     moviesData,
     lastPageData,
     currentPage,
+    limit,
   })
 
   const handleSearchChange = (query: string) => {

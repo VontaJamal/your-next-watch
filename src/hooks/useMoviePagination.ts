@@ -5,12 +5,14 @@ type UseMoviePaginationProps = {
   moviesData: {data: any[]; totalPages: number} | undefined
   lastPageData: {data: any[]} | undefined
   currentPage: number
+  limit: number
 }
 
 export function useMoviePagination({
   moviesData,
   lastPageData,
   currentPage,
+  limit,
 }: UseMoviePaginationProps) {
   const router = useRouter()
 
@@ -18,7 +20,6 @@ export function useMoviePagination({
     if (!moviesData) return {start: 0, end: 0, total: 0}
 
     const {totalPages, data} = moviesData
-    const limit = MOVIES_PER_PAGE
     const currentPageStart = (currentPage - 1) * limit + 1
     const currentPageEnd = currentPageStart + data.length - 1
 
@@ -40,7 +41,7 @@ export function useMoviePagination({
     router.push(
       {
         pathname: router.pathname,
-        query: {...router.query, page},
+        query: {...router.query, page, limit},
       },
       undefined,
       {shallow: true},
