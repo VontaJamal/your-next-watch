@@ -5,6 +5,7 @@ import {useRouter} from 'next/router'
 import {useEffect, useState} from 'react'
 import {useMoviePagination} from '../../hooks/useMoviePagination'
 import {SearchInput} from '../SearchInput'
+import {MOVIES_PER_PAGE} from '../../constants/pagination'
 
 export function MovieFinder() {
   const router = useRouter()
@@ -32,7 +33,7 @@ export function MovieFinder() {
           ? `&search=${encodeURIComponent(searchQuery)}`
           : ''
         const response = await authenticatedFetch(
-          `/movies?page=${currentPage}${searchParam}`,
+          `/movies?page=${currentPage}&limit=${MOVIES_PER_PAGE}${searchParam}`,
         )
         if (!response.ok) {
           throw new Error('Failed to fetch movies')
@@ -55,7 +56,7 @@ export function MovieFinder() {
           ? `&search=${encodeURIComponent(searchQuery)}`
           : ''
         const response = await authenticatedFetch(
-          `/movies?page=${moviesData.totalPages}${searchParam}`,
+          `/movies?page=${moviesData.totalPages}&limit=${MOVIES_PER_PAGE}${searchParam}`,
         )
         if (!response.ok) {
           throw new Error('Failed to fetch last page')
