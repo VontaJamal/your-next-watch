@@ -119,10 +119,6 @@ export function MovieFinder() {
     setSearchQuery(query)
   }
 
-  const handleGenreChange = (genre: string) => {
-    setSelectedGenre(genre)
-  }
-
   return (
     <div className="w-3/5 my-5 mx-auto text-center">
       <div className="flex gap-4 justify-center items-end mb-6">
