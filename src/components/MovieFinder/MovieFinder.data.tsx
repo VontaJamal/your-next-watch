@@ -2,18 +2,64 @@ import {MovieFinderView} from './MovieFinder.view'
 import {useQuery} from '@tanstack/react-query'
 import {authenticatedFetch} from '../../utils/client'
 import {useRouter} from 'next/router'
-import {useEffect, useState} from 'react'
+import {useEffect, useReducer} from 'react'
 import {useMoviePagination} from '../../hooks/useMoviePagination'
 import {SearchInput} from '../SearchInput'
 import {GenreFilter} from '../GenreFilter'
 import {MOVIES_PER_PAGE} from '../../constants/pagination'
 
+type Movie = {
+  id: string
+  title: string
+  posterUrl?: string
+  rating?: string
+}
+
+type MovieSearchState = {
+  currentPage: number
+  searchQuery: string
+  selectedGenre: string
+  limit: number
+}
+
+type MovieSearchAction =
+  | {
+      type: 'SET_FROM_ROUTER'
+      payload: {page: number; search: string; genre: string; limit: number}
+    }
+  | {type: 'SET_PAGE'; payload: number}
+  | {type: 'SET_SEARCH'; payload: string}
+  | {type: 'SET_GENRE'; payload: string}
+  | {type: 'SET_LIMIT'; payload: number}
+
+const movieSearchReducer = (
+  state: MovieSearchState,
+  action: MovieSearchAction,
+): MovieSearchState => {
+  switch (action.type) {
+    case 'SET_FROM_ROUTER':
+      return {...state, ...action.payload}
+    case 'SET_PAGE':
+      return {...state, currentPage: action.payload}
+    case 'SET_SEARCH':
+      return {...state, searchQuery: action.payload}
+    case 'SET_GENRE':
+      return {...state, selectedGenre: action.payload}
+    case 'SET_LIMIT':
+      return {...state, limit: action.payload}
+    default:
+      return state
+  }
+}
+
 export function MovieFinder() {
   const router = useRouter()
-  const [currentPage, setCurrentPage] = useState(1)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedGenre, setSelectedGenre] = useState('')
-  const [limit, setLimit] = useState(MOVIES_PER_PAGE)
+  const [state, dispatch] = useReducer(movieSearchReducer, {
+    currentPage: 1,
+    searchQuery: '',
+    selectedGenre: '',
+    limit: MOVIES_PER_PAGE,
+  })
 
   useEffect(() => {
     if (router.isReady) {
@@ -22,12 +68,12 @@ export function MovieFinder() {
       const genre = (router.query.genre as string) || ''
       const limitParam =
         parseInt(router.query.limit as string) || MOVIES_PER_PAGE
-      setCurrentPage(page)
-      setSearchQuery(search)
-      setSelectedGenre(genre)
-      setLimit(limitParam)
 
-      // Add limit to URL if it's not present
+      dispatch({
+        type: 'SET_FROM_ROUTER',
+        payload: {page, search, genre, limit: limitParam},
+      })
+
       if (!router.query.limit) {
         router.replace(
           {
@@ -47,76 +93,66 @@ export function MovieFinder() {
     router.query.limit,
   ])
 
+  const buildQueryParams = (page: number) => {
+    const searchParam = state.searchQuery
+      ? `&search=${encodeURIComponent(state.searchQuery)}`
+      : ''
+    const genreParam = state.selectedGenre
+      ? `&genre=${encodeURIComponent(state.selectedGenre)}`
+      : ''
+    return `/movies?page=${page}&limit=${state.limit}${searchParam}${genreParam}`
+  }
+
+  const fetchMovies = async (page: number) => {
+    try {
+      const response = await authenticatedFetch(buildQueryParams(page))
+      if (!response.ok) {
+        throw new Error('Failed to fetch movies')
+      }
+      return response.json()
+    } catch (error) {
+      throw new Error(`Failed to fetch movies: ${error}`)
+    }
+  }
+
   const {
     data: moviesData,
     isLoading,
     error,
-  } = useQuery<{data: any[]; totalPages: number}, Error>({
-    queryKey: ['movies', currentPage, searchQuery, selectedGenre, limit],
-    queryFn: async () => {
-      try {
-        const searchParam = searchQuery
-          ? `&search=${encodeURIComponent(searchQuery)}`
-          : ''
-        const genreParam = selectedGenre
-          ? `&genre=${encodeURIComponent(selectedGenre)}`
-          : ''
-        const response = await authenticatedFetch(
-          `/movies?page=${currentPage}&limit=${limit}${searchParam}${genreParam}`,
-        )
-        if (!response.ok) {
-          throw new Error('Failed to fetch movies')
-        }
-        return response.json()
-      } catch (error) {
-        throw new Error(`Failed to fetch movies: ${error}`)
-      }
-    },
+  } = useQuery<{data: Movie[]; totalPages: number}, Error>({
+    queryKey: [
+      'movies',
+      state.currentPage,
+      state.searchQuery,
+      state.selectedGenre,
+      state.limit,
+    ],
+    queryFn: () => fetchMovies(state.currentPage),
     enabled: router.isReady,
   })
 
-  // Second query to get exact count from last page
-  const {data: lastPageData} = useQuery<{data: any[]}, Error>({
+  const {data: lastPageData} = useQuery<{data: Movie[]}, Error>({
     queryKey: [
       'movies',
       'lastPage',
       moviesData?.totalPages,
-      searchQuery,
-      selectedGenre,
-      limit,
+      state.searchQuery,
+      state.selectedGenre,
+      state.limit,
     ],
-    queryFn: async () => {
-      if (!moviesData?.totalPages) return null
-      try {
-        const searchParam = searchQuery
-          ? `&search=${encodeURIComponent(searchQuery)}`
-          : ''
-        const genreParam = selectedGenre
-          ? `&genre=${encodeURIComponent(selectedGenre)}`
-          : ''
-        const response = await authenticatedFetch(
-          `/movies?page=${moviesData.totalPages}&limit=${limit}${searchParam}${genreParam}`,
-        )
-        if (!response.ok) {
-          throw new Error('Failed to fetch last page')
-        }
-        return response.json()
-      } catch (error) {
-        throw new Error(`Failed to fetch last page: ${error}`)
-      }
-    },
+    queryFn: () => fetchMovies(moviesData!.totalPages),
     enabled: router.isReady && !!moviesData?.totalPages,
   })
 
   const {getResultsInfo, handlePageChange} = useMoviePagination({
     moviesData,
     lastPageData,
-    currentPage,
-    limit,
+    currentPage: state.currentPage,
+    limit: state.limit,
   })
 
   const handleSearchChange = (query: string) => {
-    setSearchQuery(query)
+    dispatch({type: 'SET_SEARCH', payload: query})
   }
 
   return (
@@ -129,7 +165,7 @@ export function MovieFinder() {
         data={moviesData}
         isLoading={isLoading}
         error={error}
-        currentPage={currentPage}
+        currentPage={state.currentPage}
         onPageChange={handlePageChange}
         resultsInfo={getResultsInfo()}
       />
