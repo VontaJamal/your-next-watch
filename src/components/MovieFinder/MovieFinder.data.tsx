@@ -6,6 +6,7 @@ import {useEffect, useReducer} from 'react'
 import {useMoviePagination} from '../../hooks/useMoviePagination'
 import {SearchInput} from '../SearchInput'
 import {GenreFilter} from '../GenreFilter'
+import {ErrorBoundary} from '../ErrorBoundary'
 import {MOVIES_PER_PAGE} from '../../constants/pagination'
 
 type Movie = {
@@ -161,14 +162,15 @@ export function MovieFinder() {
         <SearchInput onSearchChange={handleSearchChange} />
         <GenreFilter />
       </div>
-      <MovieFinderView
-        data={moviesData}
-        isLoading={isLoading}
-        error={error}
-        currentPage={state.currentPage}
-        onPageChange={handlePageChange}
-        resultsInfo={getResultsInfo()}
-      />
+      <ErrorBoundary>
+        <MovieFinderView
+          data={moviesData}
+          isLoading={isLoading}
+          currentPage={state.currentPage}
+          onPageChange={handlePageChange}
+          resultsInfo={getResultsInfo()}
+        />
+      </ErrorBoundary>
     </div>
   )
 }
