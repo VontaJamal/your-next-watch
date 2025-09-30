@@ -150,6 +150,7 @@ export function MovieFinder() {
     lastPageData,
     currentPage: state.currentPage,
     limit: state.limit,
+    dispatch,
   })
 
   const handleSearchChange = (query: string) => {
