@@ -1,1 +1,9 @@
-Find your next movie experience
+Your next watch - a movie search app
+
+
+**Interesting or significant:** I think it's significant that the search filter and the genre filters work together and they are all tied together with the main application if you weren't filtering at all with the useReducer hook. Anywhere the app updates the search, genre, or page viewed will update the url and update the page data. This app if deployed is sharable and should all use the url as the source of truth. I like to use the url as much as possible as another way of state management. I chose to use a reducer because all of the state updates in this case I feel are very related to each other so combining them into a userReducer hook made sense.
+
+**Most pleased with:** The ux of the application. I added in Error Boundaries to ensure a user should never feel like the entire app has crashed. Accessibility enhancements for users of all types to be able to experience the application. I've also done what I can to make the app very resilient. Adding tests to ensure major pieces don't break without warning and proper data checking so it should never flat out crash while a user is viewing any of the movie results. In the event it does break I think the errors should be readable enough to find the problem area and quickly find a solution.
+
+**Given more time**: I would have liked to enhance the speed of the app even more. Doing things like pre-fetching the next and previous page. I'd have looked for more ways to make the application more accessible and be able to use the app without needing a mouse. I would also have liked to have built a recommendation engine. Could start with giving a user a way to save movies they were interested in and an ability to rate those movies. Then find other movies within that genre with an ok rating or with some of those actors and give them recommendations for their next watch.
+
