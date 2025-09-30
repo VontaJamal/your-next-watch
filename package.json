@@ -21,7 +21,7 @@
     "lint": "next lint",
     "test": "jest",
     "format": "prettier --write ./src",
-    "postintall": "npm rebuild sharp"
+    "postinstall": "npm rebuild sharp"
   },
   "dependencies": {
     "@tanstack/react-query": "4.29.25",
