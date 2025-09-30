@@ -61,31 +61,29 @@ export function SearchInput({onSearchChange}: SearchInputProps) {
   }
 
   return (
-    <div className="mb-6">
-      <div className="flex gap-2 max-w-md mx-auto">
-        <input
-          type="text"
-          placeholder="Search movies..."
-          value={inputValue}
-          onChange={(e) => handleInputChange(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
+    <div className="flex gap-2 max-w-md">
+      <input
+        type="text"
+        placeholder="Search movies..."
+        value={inputValue}
+        onChange={(e) => handleInputChange(e.target.value)}
+        onKeyDown={handleKeyDown}
+        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      />
+      <button
+        onClick={handleSubmit}
+        className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+      >
+        Search
+      </button>
+      {hasSearchQuery && (
         <button
-          onClick={handleSubmit}
-          className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+          onClick={handleClearSearch}
+          className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
         >
-          Search
+          Clear
         </button>
-        {hasSearchQuery && (
-          <button
-            onClick={handleClearSearch}
-            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
-          >
-            Clear
-          </button>
-        )}
-      </div>
+      )}
     </div>
   )
 }
