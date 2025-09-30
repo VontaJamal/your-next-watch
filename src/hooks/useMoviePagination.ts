@@ -6,6 +6,7 @@ type UseMoviePaginationProps = {
   lastPageData: {data: any[]} | undefined
   currentPage: number
   limit: number
+  dispatch: (action: {type: 'SET_PAGE'; payload: number}) => void
 }
 
 export function useMoviePagination({
@@ -13,6 +14,7 @@ export function useMoviePagination({
   lastPageData,
   currentPage,
   limit,
+  dispatch,
 }: UseMoviePaginationProps) {
   const router = useRouter()
 
@@ -38,6 +40,8 @@ export function useMoviePagination({
   }
 
   const handlePageChange = (page: number) => {
+    dispatch({type: 'SET_PAGE', payload: page})
+
     router.push(
       {
         pathname: router.pathname,

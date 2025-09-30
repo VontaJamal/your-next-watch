@@ -4,7 +4,6 @@ import {Pagination} from '../Pagination'
 type MovieFinderViewProps = {
   data: {data: any[]; totalPages: number} | undefined
   isLoading: boolean
-  error: Error | null
   currentPage: number
   onPageChange: (page: number) => void
   resultsInfo: {start: number; end: number; total: number}
@@ -13,11 +12,21 @@ type MovieFinderViewProps = {
 export function MovieFinderView({
   data,
   isLoading,
-  error,
   currentPage,
   onPageChange,
   resultsInfo,
 }: MovieFinderViewProps) {
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading movies...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <>
       <MovieListView data={data} />

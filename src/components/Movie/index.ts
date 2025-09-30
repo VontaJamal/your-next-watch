@@ -1,1 +1,1 @@
-export {Movie} from './Movie.view'
+export {Movie} from './Movie.data'
