@@ -1,0 +1,62 @@
+name: Agents Baseline Check
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  verify-agents-baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate CORE-DOCTRINE baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          target="AGENTS.md"
+          [[ -f "$target" ]] || { echo "AGENTS.md missing" >&2; exit 1; }
+
+          start='<!-- CORE-DOCTRINE:START -->'
+          end='<!-- CORE-DOCTRINE:END -->'
+
+          marker_count="$(grep -Ec '<!-- CORE-DOCTRINE:(START|END) -->' "$target")"
+          [[ "$marker_count" -eq 2 ]] || { echo "AGENTS.md must contain exactly one CORE-DOCTRINE block" >&2; exit 1; }
+
+          block="$(awk -v s="$start" -v e="$end" '
+            BEGIN { capture=0 }
+            {
+              if (index($0, s)) { capture=1; print; next }
+              if (capture) print
+              if (index($0, e)) { exit }
+            }
+          ' "$target")"
+
+          [[ -n "$block" ]] || { echo "CORE-DOCTRINE block is empty" >&2; exit 1; }
+
+          for required in \
+            "## Command Doctrine (Solo Leveling Model)" \
+            "### Protagonist Commander" \
+            "Saint of Aesthetics" \
+            "Saint of Security" \
+            "Saint of Accessibility" \
+            "Saint of Testing" \
+            "codex/*" \
+            "clean git tree before running verification/testing" \
+            "clean git tree before declaring work complete" \
+            "behavior-first tests" \
+            "hourly/nightly" \
+            "weekly/monthly/quarterly"; do
+            printf '%s\n' "$block" | grep -Fq "$required" || {
+              echo "CORE-DOCTRINE block missing required text: $required" >&2
+              exit 1
+            }
+          done
