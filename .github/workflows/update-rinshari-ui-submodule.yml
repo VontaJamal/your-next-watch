@@ -1,0 +1,45 @@
+name: Update rinshari-ui submodule
+
+on:
+  schedule:
+    - cron: '0 14 * * 1,4'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-submodule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: Update submodule pointer to latest main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git submodule sync --recursive
+          git submodule update --init --recursive
+          git -C design/rinshari-ui fetch origin main
+          git -C design/rinshari-ui checkout origin/main
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: codex/bump-rinshari-ui-submodule
+          base: main
+          title: "chore: bump rinshari-ui submodule"
+          commit-message: "chore: bump rinshari-ui submodule"
+          body: |
+            Automated update of `design/rinshari-ui` to latest `main`.
+          labels: |
+            automation
+            design-system
+          add-paths: |
+            design/rinshari-ui

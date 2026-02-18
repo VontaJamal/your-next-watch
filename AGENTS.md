@@ -25,3 +25,18 @@ You are the Protagonist Commander (Shadow Monarch model): final authority on doc
 
 ## Local Repository Overrides
 - Add repository-specific constraints, product requirements, and implementation notes below this line.
+
+<!-- RINSHARI-UI:START -->
+## Design Preflight Requirement (Managed)
+For any UI/UX change, agents must do all of the following before implementation:
+1. Read `design/rinshari-ui/templates/design-preflight.md`.
+2. Audit repository animation/motion implementation first and note keep/change decisions.
+3. Read relevant files in `design/rinshari-ui/principles/`.
+4. Read local `docs/site-soul-brief.md`.
+5. In task output/PR, provide:
+   - Applied principles
+   - Site Soul alignment
+   - Animation audit summary
+   - AI intent map
+<!-- RINSHARI-UI:END -->
+
