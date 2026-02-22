@@ -37,6 +37,8 @@ AI is a force multiplier under command discipline, not a substitute for judgment
    - AI may automate planning and implementation steps, but accountability remains human-owned.
    - Never claim completion based only on AI output without verification.
    - Branch hygiene and clean-tree completion gates remain mandatory.
+   - Ensure a clean git tree before running verification/testing.
+   - Ensure a clean git tree before declaring work complete.
 6. Saint of Scales
    Governs scalability and complexity right-sizing: scale architecture aggressively when needed, keep systems minimal when simple solutions satisfy requirements, and never overbuild by default.
    Script (AI Laws):
@@ -76,9 +78,9 @@ All agents must satisfy and follow every Saint doctrine and discipline as a pre-
 <!-- RINSHARI-UI:START -->
 ## Design Preflight Requirement (Managed)
 For any UI/UX change, agents must do all of the following before implementation:
-1. Read `design/rinshari-ui/templates/design-preflight.md`.
+1. Read `design/rinshari-eye/templates/design-preflight.md`.
 2. Audit repository animation/motion implementation first and note keep/change decisions.
-3. Read relevant files in `design/rinshari-ui/principles/`.
+3. Read relevant files in `design/rinshari-eye/principles/`.
 4. Read local `docs/site-soul-brief.md`.
 5. In task output/PR, provide:
    - Applied principles
@@ -86,4 +88,3 @@ For any UI/UX change, agents must do all of the following before implementation:
    - Animation audit summary
    - AI intent map
 <!-- RINSHARI-UI:END -->
-
